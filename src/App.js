@@ -26,7 +26,7 @@ function App() {
 
 
   const decBreak = () => {
-    setClock({...clock, time: clock.time -= 60, session: clock.break -= 1});
+    if (clock.time > 60 && clock.break > 1 && clock.status === 'inactive') setClock({...clock, time: clock.time -= 60, break: clock.break -= 1});
   }
 
   const incBreak = () => {
@@ -34,7 +34,7 @@ function App() {
   }
 
   const decSession = () => {
-    setClock({...clock, time: clock.time -= 60, session: clock.session -= 1});
+    if (clock.time > 60 && clock.session > 1 && clock.status === 'inactive') setClock({...clock, time: clock.time -= 60, session: clock.session -= 1});
   }
 
   const incSession = () => {
@@ -47,7 +47,6 @@ function App() {
 
   const startTimer = () => {
     setClock({...clock, time: clock.time -= 1, status: 'active'});
-    // console.log(clock.time);
   }
 
   const stopTimer = () => {
