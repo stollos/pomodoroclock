@@ -8,7 +8,7 @@ function App() {
   const [clock, setClock] = useState({
     session: 25,
     break: 5,
-    time: 1500,
+    time: 5,
     status: 'inactive',
     phase: 'Session'
   });
@@ -23,22 +23,20 @@ function App() {
     return min + ':' + sec;
   }
 
-
-
   const decBreak = () => {
-    if (clock.time > 60 && clock.break > 1 && clock.status === 'inactive') setClock({...clock, time: clock.time -= 60, break: clock.break -= 1});
+    if (clock.break > 1 && clock.status === 'inactive') clock.phase === 'Break' ? setClock({...clock, break: clock.break -= 1,  time: clock.break * 60}) : setClock({...clock, break: clock.break -= 1});
   }
 
   const incBreak = () => {
-    setClock({...clock, time: clock.time += 60, session: clock.break += 1});
-  }
+    clock.phase === 'Break' ? setClock({...clock, break: clock.break += 1,  time: clock.break * 60}) : setClock({...clock, break: clock.break += 1});  }
 
   const decSession = () => {
-    if (clock.time > 60 && clock.session > 1 && clock.status === 'inactive') setClock({...clock, time: clock.time -= 60, session: clock.session -= 1});
+    if (clock.session > 1 && clock.status === 'inactive')
+    clock.phase === 'Session' ? setClock({...clock, session: clock.session -= 1,  time: clock.session * 60}) : setClock({...clock, session: clock.session -= 1});
   }
 
   const incSession = () => {
-    setClock({...clock, time: clock.time += 60, session: clock.session += 1});
+    clock.phase === 'Session' ? setClock({...clock, session: clock.session += 1,  time: clock.session * 60}) : setClock({...clock, session: clock.session += 1});
   }
 
   const start_stop = () => {
@@ -46,13 +44,27 @@ function App() {
   }
 
   const startTimer = () => {
-    setClock({...clock, time: clock.time -= 1, status: 'active'});
+    setClock({...clock, time: clock.time -= 1, status: 'active'})
+    phaseManager();
+
+    // if (clock.time === 0 && clock.phase === 'Session') setClock({...clock, time: clock.break * 60, phase: 'Break'});
+    // else if (clock.time === 0 && clock.phase === 'Break') setClock({...clock, time: clock.session * 60, phase: 'Session'});
+    // else setClock({...clock, time: clock.time -= 1, status: 'active'});
+
+    console.log(clock.status);
   }
 
   const stopTimer = () => {
     setClock({...clock, status: 'inactive'});
     clearInterval(intervalID.current)
   }
+
+  const phaseManager = () => {
+    if (clock.time === 0 && clock.phase === 'Session') setClock({...clock, time: clock.break * 60, phase: 'Break'});
+    if (clock.time === 0 && clock.phase === 'Break') setClock({...clock, time: clock.session * 60, phase: 'Session'});
+  }
+
+  // ohhhhhhh great, setState is asynchronous, no setting state multiple times in a single call. this will overwrite previous properties written to that state.
 
   const resetClock = () => {
     stopTimer();
@@ -99,3 +111,5 @@ function App() {
 }
 
 export default App;
+
+
